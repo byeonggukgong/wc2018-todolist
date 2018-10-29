@@ -1,26 +1,34 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, Response, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
+
 app.debug = True
 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/sqlite3.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
-class Todo:
-    def __init__(self, id: int, title: str, contents: str) -> None:
-        self._id = id
-        self._title = title
-        self._contents = contents
-
-    def to_json(self) -> dict:
-        return {
-            'id': self._id,
-            'title': self._title,
-            'contents': self._contents
-        }
+db = SQLAlchemy(app)
+ma = Marshmallow(app)
 
 
-todos = []
+class Todo(db.Model):
+    __tablename__ = 'todo'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String, nullable=False)
+    contents = db.Column(db.String, nullable=False)
+
+    def __repr__(self) -> str:
+        return f'<Todo {self.title}>'
+
+
+class TodoSchema(ma.ModelSchema):
+    class Meta:
+        model = Todo
 
 
 @app.route('/')
@@ -28,15 +36,22 @@ def index() -> str:
     return 'Hello WINTER CODING!'
 
 
-@app.route('/todos')
-def get_todos() -> list:
-    return jsonify(todos)
+@app.route('/todos', methods=['GET'])
+def read_todos() -> list:
+    todos = Todo.query.all()
+    todos_schema = TodoSchema(many=True)
+
+    result = todos_schema.dump(todos)
+
+    return jsonify(result.data)
 
 
-@app.route('/todo', methods=['POST'])
+@app.route('/todos', methods=['POST'])
 def create_todo() -> Response:
     todo = Todo(**request.get_json())
-    todos.append(todo.to_json())
+
+    db.session.add(todo)
+    db.session.commit()
 
     return Response(
         '{"message": "success"}', status=201, mimetype='application/json')
