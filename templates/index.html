@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+  <header>
+    <h1>Hello WINTER CODING!</h1>
+  </header>
+  <section class="section">
+    {% for todo in todos %}
+      <ul>
+          <li>{{ todo.title }}</li>
+          <li>{{ todo.contents }}</li>
+      </ul>
+    {% endfor %}
+  </section>
+</body>
+</html>

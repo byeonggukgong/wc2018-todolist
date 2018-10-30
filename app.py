@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
@@ -38,8 +38,10 @@ class TodoSchema(ma.ModelSchema):
 
 
 @app.route('/')
-def index() -> str:
-    return 'Hello WINTER CODING!'
+def index() -> Response:
+    todos = Todo.query.all()
+
+    return render_template('index.html', todos=todos)
 
 
 @app.route('/todos', methods=['GET'])
