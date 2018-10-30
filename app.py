@@ -21,8 +21,10 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     contents = db.Column(db.String, nullable=False)
+    deadline = db.Column(db.DateTime, nullable=True)
+    is_done = db.Column(db.Boolean, default=False)
 
-    def __init__(self, title, contents) -> None:
+    def __init__(self, title: str, contents: str) -> None:
         self.title = title
         self.contents = contents
 
@@ -75,8 +77,12 @@ def create_todo() -> Response:
 def update_todo(id: int) -> Response:
     todo = Todo.query.get(id)
 
-    todo.title = request.get_json()['title']
-    todo.contents = request.get_json()['contents']
+    data = request.get_json()
+
+    todo.title = data['title']
+    todo.contents = data['contents']
+    todo.deadline = data['deadline']
+    todo.is_done = data['is_done']
 
     db.session.commit()
 
