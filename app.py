@@ -22,6 +22,10 @@ class Todo(db.Model):
     title = db.Column(db.String, nullable=False)
     contents = db.Column(db.String, nullable=False)
 
+    def __init__(self, title, contents) -> None:
+        self.title = title
+        self.contents = contents
+
     def __repr__(self) -> str:
         return f'<Todo {self.title}>'
 
@@ -46,6 +50,16 @@ def read_todos() -> list:
     return jsonify(result.data)
 
 
+@app.route('/todos/<int:id>', methods=['GET'])
+def read_todo(id: int) -> dict:
+    todo = Todo.query.get(id)
+    todo_schema = TodoSchema()
+
+    result = todo_schema.dump(todo)
+
+    return jsonify(result.data)
+
+
 @app.route('/todos', methods=['POST'])
 def create_todo() -> Response:
     todo = Todo(**request.get_json())
@@ -55,6 +69,30 @@ def create_todo() -> Response:
 
     return Response(
         '{"message": "success"}', status=201, mimetype='application/json')
+
+
+@app.route('/todos/<int:id>', methods=['PUT'])
+def update_todo(id: int) -> Response:
+    todo = Todo.query.get(id)
+
+    todo.title = request.get_json()['title']
+    todo.contents = request.get_json()['contents']
+
+    db.session.commit()
+
+    return Response(
+        '{"message": "success"}', status=200, mimetype='application/json')
+
+
+@app.route('/todos/<int:id>', methods=['DELETE'])
+def delete_todo(id: int) -> Response:
+    todo = Todo.query.get(id)
+
+    db.session.delete(todo)
+    db.session.commit()
+
+    return Response(
+        '{"message": "success"}', status=200, mimetype='application/json')
 
 
 if __name__ == '__main__':
