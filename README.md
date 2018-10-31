@@ -1,1 +1,5 @@
 # wintercoding-todolist
+
+### Server
+
+### Client

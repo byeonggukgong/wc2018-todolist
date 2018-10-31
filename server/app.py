@@ -21,8 +21,9 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     contents = db.Column(db.String, nullable=False)
+    priority = db.Column(db.Integer, default=0, nullable=False)
     deadline = db.Column(db.DateTime, nullable=True)
-    is_done = db.Column(db.Boolean, default=False)
+    is_done = db.Column(db.Boolean, default=False, nullable=True)
 
     def __init__(self, title: str, contents: str) -> None:
         self.title = title
@@ -85,6 +86,7 @@ def update_todo(id: int) -> Response:
     todo.contents = data['contents']
     todo.deadline = data['deadline']
     todo.is_done = data['is_done']
+    todo.priority = data['priority']
 
     db.session.commit()
 
