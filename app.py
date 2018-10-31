@@ -56,7 +56,7 @@ def read_todos() -> list:
 
 @app.route('/todos/<int:id>', methods=['GET'])
 def read_todo(id: int) -> dict:
-    todo = Todo.query.get(id)
+    todo = Todo.query.get_or_404(id)
     todo_schema = TodoSchema()
 
     result = todo_schema.dump(todo)
@@ -72,12 +72,12 @@ def create_todo() -> Response:
     db.session.commit()
 
     return Response(
-        '{"message": "success"}', status=201, mimetype='application/json')
+        '{"success": true}', status=201, mimetype='application/json')
 
 
 @app.route('/todos/<int:id>', methods=['PUT'])
 def update_todo(id: int) -> Response:
-    todo = Todo.query.get(id)
+    todo = Todo.query.get_or_404(id)
 
     data = request.get_json()
 
@@ -89,18 +89,18 @@ def update_todo(id: int) -> Response:
     db.session.commit()
 
     return Response(
-        '{"message": "success"}', status=200, mimetype='application/json')
+        '{"success": true}', status=200, mimetype='application/json')
 
 
 @app.route('/todos/<int:id>', methods=['DELETE'])
 def delete_todo(id: int) -> Response:
-    todo = Todo.query.get(id)
+    todo = Todo.query.get_or_404(id)
 
     db.session.delete(todo)
     db.session.commit()
 
     return Response(
-        '{"message": "success"}', status=200, mimetype='application/json')
+        '{"success": true}', status=200, mimetype='application/json')
 
 
 if __name__ == '__main__':
