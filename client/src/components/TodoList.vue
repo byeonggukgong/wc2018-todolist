@@ -1,27 +1,63 @@
 <template>
-  <div>
-    <input type="text" name="title" v-model="title" />
-    <input type="text" name="contents" v-model="contents" />
-    <button class="btn btn-primary" v-on:click="createTodo">생성하기</button>
-    <div v-for="todo in todos" v-bind:key="todo.id">
-      <h1>{{ todo.title }}</h1>
-      <p>{{ todo.contents }}</p>
-      <input type="checkbox" name="is_done" v-bind:value="todo.is_done" v-model="todo.is_done" />
-      <button class="btn btn-primary" v-on:click="updateTodo(todo)">수정하기</button>
-      <button class="btn btn-primary" v-on:click="deleteTodo(todo)">삭제하기</button>
+  <div class="container">
+    <form class="form-inline">
+      <input type="text" class="form-control" placeholder="제목" v-model="newTitle">
+      <label class="sr-only">Title</label>
+      <input type="text" class="form-control" placeholder="내용" v-model="newContents">
+      <label class="sr-only">Contents</label>
+      <button class="btn btn-primary" @click="createTodo">생성하기</button>
+    </form>
+    <div class="row">
+      <ul class="list-group">
+        <li class="list-group-item" v-for="todo in todos" :key="todo.id">
+          <div class="row">
+            <div class="col">
+              <input type="checkbox" :checked="todo.is_done" @change="doneTodo(todo)" />
+            </div>
+            <div class="col">
+              <input type="text" v-model="todo.title">
+            </div>
+            <div class="col">
+              <input type="text" v-model="todo.contents">
+            </div>
+            <div class="col">
+              <input type="text" v-model="todo.priority">
+            </div>
+            <div class="col">
+              <datetime v-model="todo.deadline"></datetime>
+            </div>
+            <div class="col">
+              <span>
+                <a @click.prevent="updateTodo(todo)">
+                  <i class="fas fa-hammer"></i>
+                </a>
+              </span>
+            </div>
+            <div class="col">
+              <span>
+                <a @click.prevent="deleteTodo(todo)">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </span>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
+import { Datetime } from 'vue-datetime';
+
 export default {
   name: 'TodoList',
   data: function () {
     return {
       uri: 'https://wintercoding-server.run.goorm.io',
       todos: [],
-      title: '',
-      contents: '',
+      newTitle: '',
+      newContents: '',
     }
   },
   methods: {
@@ -36,8 +72,8 @@ export default {
     },
     createTodo: function () {
       this.$http.post(`${this.uri}/todos`, {
-        title: this.title,
-        contents: this.contents
+        title: this.newTitle,
+        contents: this.newContents
       })
       .then((result) => {
         this.readTodos();
@@ -47,6 +83,7 @@ export default {
       });
     },
     updateTodo: function (todo) {
+      console.log(todo.deadline);
       this.$http.put(`${this.uri}/todos/${todo.id}`, {
         title: todo.title,
         contents: todo.contents,
@@ -61,6 +98,17 @@ export default {
           console.log(error);
       })
     },
+    doneTodo: function (todo) {
+      this.$http.patch(`${this.uri}/todos/${todo.id}`, {
+        is_done: !todo.is_done
+      })
+      .then((result) => {
+        todo.is_done = !todo.is_done;
+      })
+      .catch((error) => {
+         console.log(error) ;
+      });
+    },
     deleteTodo: function (todo) {
       this.$http.delete(`${this.uri}/todos/${todo.id}`)
       .then((result) => {
@@ -73,6 +121,9 @@ export default {
   },
   mounted() {
     this.readTodos()
+  },
+  components: {
+    datetime: Datetime
   }
 }
 </script>
