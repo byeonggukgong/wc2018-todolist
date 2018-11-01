@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 
+from datetime import datetime
+
 app = Flask(__name__)
 
 app.debug = True
@@ -81,6 +83,8 @@ def update_todo(id: int) -> Response:
 
     for key in ('title', 'contents', 'priority', 'deadline', 'is_done'):
         if key in data:
+            if key == 'deadline':
+                data[key] = datetime.strptime(data[key], '%Y-%m-%dT%H:%M:%S.%fZ')
             setattr(todo, key, data[key])
 
     db.session.commit()
