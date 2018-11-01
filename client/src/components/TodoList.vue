@@ -26,6 +26,11 @@
             <div class="col">
               <datetime v-model="todo.deadline"></datetime>
             </div>
+            <div class="col" v-if=isDeadlineOver(todo)>
+              <span>
+                <i class="fas fa-bell"></i>
+              </span>
+            </div>
             <div class="col">
               <span>
                 <a @click.prevent="updateTodo(todo)">
@@ -61,6 +66,16 @@ export default {
     }
   },
   methods: {
+    isDeadlineOver: function (todo) {
+      const deadline = Date.parse(todo.deadline);
+      const now = Date.parse(new Date());
+
+      if (now > deadline) {
+        return true;
+      }
+
+      return false;
+    },
     readTodos: function() {
       this.$http.get(`${this.uri}/todos`)
       .then((result) => {
