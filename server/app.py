@@ -3,6 +3,7 @@
 from flask import Flask, Response, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_cors import CORS
 
 app = Flask(__name__)
 
@@ -13,6 +14,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+cors = CORS(app)
 
 
 class Todo(db.Model):
@@ -68,6 +70,8 @@ def read_todo(id: int) -> dict:
 @app.route('/todos', methods=['POST'])
 def create_todo() -> Response:
     todo = Todo(**request.get_json())
+
+    print(request.get_json())
 
     db.session.add(todo)
     db.session.commit()
