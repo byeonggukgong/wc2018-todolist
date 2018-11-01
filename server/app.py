@@ -73,17 +73,15 @@ def create_todo() -> Response:
         '{"success": true}', status=201, mimetype='application/json')
 
 
-@app.route('/todos/<int:id>', methods=['PUT'])
+@app.route('/todos/<int:id>', methods=['PUT', 'PATCH'])
 def update_todo(id: int) -> Response:
     todo = Todo.query.get_or_404(id)
 
     data = request.get_json()
 
-    todo.title = data['title']
-    todo.contents = data['contents']
-    todo.deadline = data['deadline']
-    todo.is_done = data['is_done']
-    todo.priority = data['priority']
+    for key in ('title', 'contents', 'priority', 'deadline', 'is_done'):
+        if key in data:
+            setattr(todo, key, data[key])
 
     db.session.commit()
 
