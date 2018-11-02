@@ -7,10 +7,10 @@ from app.models import Todo, TodoSchema
 
 from datetime import datetime
 
-blueprint = Blueprint('todo', __name__)
+blueprint = Blueprint('todo', __name__, url_prefix='/todos')
 
 
-@blueprint.route('/todos', methods=['GET'])
+@blueprint.route('', methods=['GET'])
 def read_todos() -> list:
     todos = Todo.query.all()
     todos_schema = TodoSchema(many=True)
@@ -20,7 +20,7 @@ def read_todos() -> list:
     return jsonify(result.data)
 
 
-@blueprint.route('/todos/<int:id>', methods=['GET'])
+@blueprint.route('/<int:id>', methods=['GET'])
 def read_todo(id: int) -> dict:
     todo = Todo.query.get_or_404(id)
     todo_schema = TodoSchema()
@@ -30,7 +30,7 @@ def read_todo(id: int) -> dict:
     return jsonify(result.data)
 
 
-@blueprint.route('/todos', methods=['POST'])
+@blueprint.route('', methods=['POST'])
 def create_todo() -> Response:
     todo = Todo(**request.get_json())
 
@@ -41,7 +41,7 @@ def create_todo() -> Response:
         '{"success": true}', status=201, mimetype='application/json')
 
 
-@blueprint.route('/todos/<int:id>', methods=['PUT', 'PATCH'])
+@blueprint.route('/<int:id>', methods=['PUT', 'PATCH'])
 def update_todo(id: int) -> Response:
     todo = Todo.query.get_or_404(id)
 
@@ -59,7 +59,7 @@ def update_todo(id: int) -> Response:
         '{"success": true}', status=200, mimetype='application/json')
 
 
-@blueprint.route('/todos/<int:id>', methods=['DELETE'])
+@blueprint.route('/<int:id>', methods=['DELETE'])
 def delete_todo(id: int) -> Response:
     todo = Todo.query.get_or_404(id)
 
