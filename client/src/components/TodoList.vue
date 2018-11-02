@@ -5,7 +5,7 @@
       <label class="sr-only">Title</label>
       <input type="text" class="form-control" placeholder="내용" v-model="newContents">
       <label class="sr-only">Contents</label>
-      <button class="btn btn-primary" @click="createTodo">생성하기</button>
+      <button class="btn btn-primary" @click.prevent="createTodo">생성하기</button>
     </form>
     <div class="row">
       <ul class="list-group">
