@@ -5,7 +5,7 @@ from flask import Blueprint, Response, request, jsonify
 from app.extensions import db
 from app.models import Todo, TodoSchema
 
-from datetime import datetime
+from dateutil.parser import parse
 
 blueprint = Blueprint('todo', __name__, url_prefix='/todos')
 
@@ -50,7 +50,8 @@ def update_todo(id: int) -> Response:
     for key in ('title', 'contents', 'priority', 'deadline', 'is_done'):
         if key in data:
             if key == 'deadline':
-                data[key] = datetime.strptime(data[key], '%Y-%m-%dT%H:%M:%S.%fZ')
+                data[key] = parse(data[key])
+
             setattr(todo, key, data[key])
 
     db.session.commit()

@@ -98,13 +98,10 @@ export default {
       });
     },
     updateTodo: function (todo) {
-      console.log(todo.deadline);
       this.$http.put(`${this.uri}/todos/${todo.id}`, {
-        title: todo.title,
-        contents: todo.contents,
-        deadline: todo.deadline,
-        priority: todo.priority,
-        is_done: todo.is_done
+        ...todo,
+        ...todo.deadline ?
+          { deadline: todo.deadline } : { deadline: undefined }
       })
       .then((result) => {
         this.readTodos();
