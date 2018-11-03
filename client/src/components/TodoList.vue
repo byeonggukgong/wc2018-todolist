@@ -59,7 +59,7 @@ export default {
   name: 'TodoList',
   data: function () {
     return {
-      uri: 'https://wintercoding-server.run.goorm.io',
+      apiBaseUrl: process.env.VUE_APP_API_BASE_URL,
       todos: [],
       newTitle: '',
       newContents: '',
@@ -69,15 +69,11 @@ export default {
     isDeadlineOver: function (todo) {
       const deadline = Date.parse(todo.deadline);
       const now = Date.parse(new Date());
-
-      if (now > deadline) {
-        return true;
-      }
-
-      return false;
+     
+      return now > deadline ? true : false;
     },
     readTodos: function() {
-      this.$http.get(`${this.uri}/todos`)
+      this.$http.get(`${this.apiBaseUrl}/todos`)
       .then((result) => {
         this.todos = result.data;
       })
@@ -86,7 +82,7 @@ export default {
       });
     },
     createTodo: function () {
-      this.$http.post(`${this.uri}/todos`, {
+      this.$http.post(`${this.apiBaseUrl}/todos`, {
         title: this.newTitle,
         contents: this.newContents
       })
@@ -98,7 +94,7 @@ export default {
       });
     },
     updateTodo: function (todo) {
-      this.$http.put(`${this.uri}/todos/${todo.id}`, {
+      this.$http.put(`${this.apiBaseUrl}/todos/${todo.id}`, {
         ...todo,
         ...todo.deadline ?
           { deadline: todo.deadline } : { deadline: undefined }
@@ -111,7 +107,7 @@ export default {
       })
     },
     doneTodo: function (todo) {
-      this.$http.patch(`${this.uri}/todos/${todo.id}`, {
+      this.$http.patch(`${this.apiBaseUrl}/todos/${todo.id}`, {
         is_done: !todo.is_done
       })
       .then((result) => {
@@ -122,7 +118,7 @@ export default {
       });
     },
     deleteTodo: function (todo) {
-      this.$http.delete(`${this.uri}/todos/${todo.id}`)
+      this.$http.delete(`${this.apiBaseUrl}/todos/${todo.id}`)
       .then((result) => {
         this.readTodos();
       })
