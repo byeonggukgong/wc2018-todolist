@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Blueprint, Response, request, jsonify
+from flask_cors import cross_origin
 
 from app.extensions import db
 from app.models import Todo, TodoSchema
@@ -11,6 +12,7 @@ blueprint = Blueprint('todo', __name__, url_prefix='/todos')
 
 
 @blueprint.route('', methods=['GET'])
+@cross_origin()
 def read_todos() -> list:
     todos = Todo.query.all()
     todos_schema = TodoSchema(many=True)
@@ -21,6 +23,7 @@ def read_todos() -> list:
 
 
 @blueprint.route('/<int:id>', methods=['GET'])
+@cross_origin()
 def read_todo(id: int) -> dict:
     todo = Todo.query.get_or_404(id)
     todo_schema = TodoSchema()
@@ -31,6 +34,7 @@ def read_todo(id: int) -> dict:
 
 
 @blueprint.route('', methods=['POST'])
+@cross_origin()
 def create_todo() -> Response:
     todo = Todo(**request.get_json())
 
@@ -42,6 +46,7 @@ def create_todo() -> Response:
 
 
 @blueprint.route('/<int:id>', methods=['PUT', 'PATCH'])
+@cross_origin()
 def update_todo(id: int) -> Response:
     todo = Todo.query.get_or_404(id)
 
@@ -61,6 +66,7 @@ def update_todo(id: int) -> Response:
 
 
 @blueprint.route('/<int:id>', methods=['DELETE'])
+@cross_origin()
 def delete_todo(id: int) -> Response:
     todo = Todo.query.get_or_404(id)
 
