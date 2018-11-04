@@ -1,53 +1,60 @@
 <template>
   <div class="container">
-    <form class="form-inline">
-      <input type="text" class="form-control" placeholder="제목" v-model="newTitle">
-      <label class="sr-only">Title</label>
-      <input type="text" class="form-control" placeholder="내용" v-model="newContents">
-      <label class="sr-only">Contents</label>
-      <button class="btn btn-primary" @click.prevent="createTodo">생성하기</button>
-    </form>
     <div class="row">
-      <ul class="list-group">
-        <li class="list-group-item" v-for="todo in todos" :key="todo.id">
-          <div class="row">
-            <div class="col">
-              <input type="checkbox" :checked="todo.is_done" @change="doneTodo(todo)" />
-            </div>
-            <div class="col">
-              <input type="text" v-model="todo.title">
-            </div>
-            <div class="col">
-              <input type="text" v-model="todo.contents">
-            </div>
-            <div class="col">
-              <input type="text" v-model="todo.priority">
-            </div>
-            <div class="col">
-              <datetime v-model="todo.deadline"></datetime>
-            </div>
-            <div class="col" v-if=isDeadlineOver(todo)>
-              <span>
-                <i class="fas fa-bell"></i>
-              </span>
-            </div>
-            <div class="col">
-              <span>
-                <a @click.prevent="updateTodo(todo)">
-                  <i class="fas fa-hammer"></i>
-                </a>
-              </span>
-            </div>
-            <div class="col">
-              <span>
-                <a @click.prevent="deleteTodo(todo)">
+      <div class="col-sm-10">
+        <h1>2018 Winter Coding Web Assignment: Todo List</h1>
+        <hr><br><br>
+        <form class="form-inline">
+          <input type="text" class="form-control form-rounded mr-sm-2" placeholder="Title" v-model="newTitle">
+          <input type="text" class="form-control form-rounded mr-sm-2" placeholder="Contents" v-model="newContents">
+          <button type="button" class="btn btn-info btn-sm" @click.prevent="createTodo">
+            <i class="fas fa-pen"></i>
+          </button>
+        </form>
+        <br><br>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Done</th>
+              <th scope="col">Title</th>
+              <th scope="col">Contents</th>
+              <th scope="col">Priority</th>
+              <th scope="col">Deadline</th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="todo in todos" :key="todo.id">
+              <td>
+                <input type="checkbox" :checked="todo.is_done" @change="doneTodo(todo)" />
+              </td>
+              <td><input type="text" v-model="todo.title"></td>
+              <td><input type="text" v-model="todo.contents"></td>
+              <td><input type="text" v-model="todo.priority"></td>
+              <td><datetime v-model="todo.deadline"></datetime></td>
+              <td>
+                <span class="badge badge-success" v-if="todo.is_done">Done :)</span>
+                <span class="badge badge-danger" v-else-if="isDeadlineOver(todo)">Deadline is over :(</span>
+              </td>
+              <td>
+                <button type="button" class="btn btn-warning btn-sm" @click.prevent="updateTodo(todo)">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+              <td>
+                <button type="button" class="btn btn-danger btn-sm" @click.prevent="deleteTodo(todo)">
                   <i class="fas fa-trash"></i>
-                </a>
-              </span>
-            </div>
-          </div>
-        </li>
-      </ul>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      
     </div>
   </div>
 </template>
@@ -137,4 +144,7 @@ export default {
 </script>
 
 <style scoped>
+.form-rounded {
+  border-radius: 1rem;
+}
 </style>
