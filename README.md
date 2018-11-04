@@ -16,10 +16,72 @@
 
 ```
 GET /todos  # Read Todos
-GET /todo/<int:id>  # Read Todo
+
+ex) /todos 200 OK
+
+[
+    {
+        "contents": "테스트를 성공적으로 완료함 :)",
+        "deadline": "2018-11-03T00:00:00+00:00",
+        "id": 1,
+        "is_done": true,
+        "priority": 3,
+        "title": "실 서버 운영 테스트하기"
+    },
+    {
+        "contents": "우여곡절 끝에 서비스 오픈함 :)",
+        "deadline": null,
+        "id": 2,
+        "is_done": true,
+        "priority": 1,
+        "title": "AWS Lightsail 사용하기"
+    },
+    {
+        "contents": "안전하게 11월 3일까지 보내기",
+        "deadline": "2018-11-03T00:00:00+00:00",
+        "id": 3,
+        "is_done": false,
+        "priority": 1,
+        "title": "완료 메일 보내기"
+    }
+]
+
+GET /todos/<int:id>  # Read Todo
+
+ex) /todos/1 200 OK
+
+{
+    "contents": "테스트를 성공적으로 완료함 :)",
+    "deadline": "2018-11-03T00:00:00+00:00",
+    "id": 1,
+    "is_done": true,
+    "priority": 3,
+    "title": "실 서버 운영 테스트하기"
+}
+
 POST /todos  # Create Todo
+
+ex) /todos/1 201 OK
+
+{
+    "success": true
+}
+
 UPDATE /todos/<int:id>  # Update Todo
+
+ex) /todos/1 200 OK
+
+{
+    "success": true
+}
+
 DELETE /todos/<int:id>  # Delete Todo
+
+ex) /todos/1 200 OK
+
+{
+    "success": true
+}
 ```
 
 ### Client
